@@ -1,0 +1,47 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://aria.bar/ns/v1"
+  ],
+  "type": ["VerifiableCredential", "ARIAIdentityDocument"],
+  "id": "did:aria:aria.bar:u-cmDoHhM3:ordering-agent",
+  "issuer": "did:aria:registry.aria.bar",
+  "validFrom": "2026-04-01T00:00:00Z",
+  "validUntil": "2027-04-01T00:00:00Z",
+  "credentialSubject": {
+    "id": "did:aria:aria.bar:u-cmDoHhM3:ordering-agent",
+    "agentName": "ordering-agent",
+    "version": "1.2.0",
+    "trustLevel": "L0",
+    "scope": [
+      "commerce:catalog:read",
+      "commerce:order:create"
+    ],
+    "hitlRequired": [
+      "commerce:order:create"
+    ],
+    "delegationDepth": 0,
+    "maxDelegationDepth": 4,
+    "spec_version": "1.0",
+    "principal": {
+      "did": "did:aria:aria.bar:u-cmDoHhM3:org",
+      "legalName": "Acme Corporation",
+      "jurisdiction": "US"
+    }
+  },
+  "credentialStatus": {
+    "id": "https://api.aria.bar/v1/status/1#42",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "42",
+    "statusListCredential": "https://api.aria.bar/v1/status/1"
+  },
+  "proof": {
+    "type": "DataIntegrityProof",
+    "cryptosuite": "mldsa65-ed25519-2026",
+    "created": "2026-04-01T00:00:00Z",
+    "proofPurpose": "assertionMethod",
+    "verificationMethod": "did:aria:registry.aria.bar#key-1",
+    "proofValue": "z4FzFe4XGnJBGcYt3bKv7YVojUxFMCAVfq9NHuXZJKkGpVrYdNbeJJ6uvN7m95ePzKoTsAxqGhfY9LKZ8sDRv4rEXAmpLeSiGnAtUrEbase64UrlEncodedCompositeMLDSA65Ed25519SignatureValueThatWouldBeApproximately4900BytesInProductionButIsTruncatedHereForReadability"
+  }
+}
