@@ -2,7 +2,7 @@
 
 **Agent Registry for Identity & Authorization**
 
-The open protocol for AI agent identity. Post-quantum cryptography. Offline verification. Zero trust assumptions.
+The open protocol for AI agent identity. DNS-anchored. Post-quantum native. Governed by a nonprofit. Working today.
 
 [![Protocol Version](https://img.shields.io/badge/protocol-v1.0-00D4AA)](https://aria.bar/spec)
 [![License: Apache 2.0](https://img.shields.io/badge/code-Apache%202.0-blue)](LICENSE-code)
@@ -67,10 +67,10 @@ ARIA is a six-layer protocol:
 
 | Level | Name | Verification | Credential validity | Status |
 |-------|------|-------------|-------------------|--------|
-| **L0** | Anchored | Account created + email verified. Self-service. | 366 days | **Live** |
-| **L1** | Identified | Domain ownership proven via DNS TXT. | 366 days | Coming soon |
-| **L2** | Certified | Legal entity verified. Government registry cross-reference. | 200 days | Coming soon |
-| **L3** | Sovereign | Government-attested identity. | 180 days | Coming soon |
+| **L0** | Anchored | Cryptographic identity. Self-service. No DNS required. | 366 days | **Live** |
+| **L1** | Identified | DNS-anchored and verified. An identified person controls this agent. | 366 days | Coming soon |
+| **L2** | Certified | Organization verified via DoH. vLEI-compatible. | 200 days | Coming soon |
+| **L3** | Sovereign | Legal entity. Government registry. HSM. | 180 days | Coming soon |
 
 ## Agent Trust Protocol (ATP)
 
@@ -110,7 +110,7 @@ Enforcement modes: `monitor` → `warn` → `strict` (graduated adoption, like D
 
 ## Governance
 
-ARIA is owned by **TrustLayer Foundation A.C.** (nonprofit) and operated by **TunoLabs** (for-profit, licensed).
+ARIA is owned by **TrustLayer Foundation A.C.** (nonprofit) and operated by **TUNO Labs SAPI de CV** (for-profit, licensed).
 
 Same model as Mozilla Foundation / Mozilla Corporation.
 
