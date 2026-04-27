@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aria.bar/schema/aid-v1.json",
-  "title": "ARIA Identity Document (AID) v1.0",
-  "description": "JSON Schema for the ARIA Identity Document — a W3C Verifiable Credential (VC Data Model 2.0) that serves as a cryptographically-signed identity document for AI agents, anchored to DNS.",
+  "title": "ARIA Identity Document (AID) v1.1",
+  "description": "JSON Schema for the ARIA Identity Document — a W3C Verifiable Credential (VC Data Model 2.0) that serves as a cryptographically-signed identity document for AI agents, anchored to DNS. v1.1 adds principal.verificationStatus for machine-readable identity-verification provenance.",
   "type": "object",
   "required": [
     "@context",
@@ -170,12 +170,12 @@
         },
         "spec_version": {
           "type": "string",
-          "const": "1.0",
-          "description": "ARIA specification version. Must be '1.0' for this schema version."
+          "const": "1.1",
+          "description": "ARIA specification version. Must be '1.1' for this schema version."
         },
         "principal": {
           "type": "object",
-          "required": ["did", "legalName", "jurisdiction"],
+          "required": ["did", "legalName", "jurisdiction", "verificationStatus"],
           "properties": {
             "did": {
               "type": "string",
@@ -191,6 +191,11 @@
               "type": "string",
               "pattern": "^[A-Z]{2}$",
               "description": "ISO 3166-1 alpha-2 country code of the principal's legal jurisdiction."
+            },
+            "verificationStatus": {
+              "type": "string",
+              "enum": ["self-declared", "registry-confirmed", "legal-verified"],
+              "description": "Machine-readable provenance of legalName. self-declared: registrant-asserted, no external check (L0, L1). registry-confirmed: cross-checked against an authoritative registry such as GLEIF LEI (L2). legal-verified: backed by government-issued legal documents and admin review (L3). Verifiers MUST consult this field before treating legalName as authoritative."
             }
           },
           "additionalProperties": false,

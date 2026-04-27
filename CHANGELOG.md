@@ -2,6 +2,14 @@
 
 All notable changes to the ARIA Protocol specification.
 
+## [1.1.0] — April 27, 2026
+
+### Added
+- `principal.verificationStatus` (required) — machine-readable provenance of `principal.legalName`. Enum: `self-declared` (L0, L1), `registry-confirmed` (L2), `legal-verified` (L3). Closes the L1 brand-impersonation gap surfaced in the April 14 adversarial audit: a verifier can now reject AIDs whose org name was self-asserted without consulting trustLevel separately.
+
+### Changed
+- `spec_version` const: `1.0` → `1.1`. AIDs claiming conformance to v1.1 MUST include `principal.verificationStatus`. Existing v1.0 AIDs remain valid against the v1.0 schema; v1.1 verifiers SHOULD treat a missing `verificationStatus` as `self-declared`.
+
 ## [1.6.0] — April 1, 2026
 
 ### Fixed
