@@ -2,6 +2,8 @@
 
 All notable changes to the ARIA Protocol specification.
 
+> **Versioning note.** The public launch (April 1, 2026) shipped as **v1.0.0** — the canonical baseline reflected in the schema (`spec_version: "1.0"` at launch) and the README badge. Pre-launch entries below (`[1.3.0]` through `[1.6.0]`) document the iterative drafts that led to that launch and use the internal working numbering of that period; they predate the v1.0.0 public release. The current schema is **v1.1** (this changelog's `[1.1.0]` entry).
+
 ## [1.1.0] — April 27, 2026
 
 ### Added

@@ -35,8 +35,8 @@ Or use `git commit -s` to add it automatically.
 
 | Change type | Process |
 |-------------|---------|
-| Typo / wording only | Direct fix. Patch version (v1.0.x). No public comment. |
-| New optional field, backward-compatible | GitHub Issue with `public-comment` label. 90-day comment window. TSC decides. Minor version (v1.7). |
+| Typo / wording only | Direct fix. Patch version (v1.1.x). No public comment. |
+| New optional field, backward-compatible | GitHub Issue with `public-comment` label. 90-day comment window. TSC decides. Minor version (v1.1). |
 | Trust level or ATP change | Same as above. Existing credentials grandfathered 36 months. |
 | Breaking change | Major version (v2.0). 90-day minimum comment period. Supermajority TSC vote. 18-month deprecation notice. |
 | Emergency security fix | Immediate fix. 30-day retroactive public comment. TSC ratifies. |
