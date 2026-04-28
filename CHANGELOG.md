@@ -4,13 +4,19 @@ All notable changes to the ARIA Protocol specification.
 
 > **Versioning note.** The public launch (April 1, 2026) shipped as **v1.0.0** — the canonical baseline reflected in the schema (`spec_version: "1.0"` at launch) and the README badge. Pre-launch entries below (`[1.3.0]` through `[1.6.0]`) document the iterative drafts that led to that launch and use the internal working numbering of that period; they predate the v1.0.0 public release. The current schema is **v1.1** (this changelog's `[1.1.0]` entry).
 
-## [1.1.0] — April 27, 2026
+## [1.1.0] — April 27-28, 2026
 
 ### Added
 - `principal.verificationStatus` (required) — machine-readable provenance of `principal.legalName`. Enum: `self-declared` (L0, L1), `registry-confirmed` (L2), `legal-verified` (L3). Closes the L1 brand-impersonation gap surfaced in the April 14 adversarial audit: a verifier can now reject AIDs whose org name was self-asserted without consulting trustLevel separately.
+- `credentialSubject.previousCredentialId` (optional) — URL of the prior AID instance superseded by this one. Enables explicit, signed chain-of-issuance: a verifier holding a current AID can walk backwards through the issuance history. Omitted on first issuance.
 
 ### Changed
 - `spec_version` const: `1.0` → `1.1`. AIDs claiming conformance to v1.1 MUST include `principal.verificationStatus`. Existing v1.0 AIDs remain valid against the v1.0 schema; v1.1 verifiers SHOULD treat a missing `verificationStatus` as `self-declared`.
+- **Top-level `id` is now a unique credential-instance URL per W3C VC 2.0 §4.4** (e.g. `https://api.aria.bar/v1/credentials/{uuidv7}`). Previously the schema reused the agent DID for both the credential `id` and `credentialSubject.id`, which conflated the credential instance with its subject. The agent DID continues to live in `credentialSubject.id` (stable across reissuances). The new top-level `id` is the equivalent of a TLS certificate serial number — unique per issuance, dereferenceable, signed inside the proof.
+
+### Migration notes
+- v1.0 AIDs with `id: "did:aria:..."` will not match the v1.1 schema regex for top-level `id`. Reissuance produces a v1.1-conformant AID. v1.0 verifiers continue to accept their own AIDs.
+- Implementations SHOULD use UUIDv7 (RFC 9562) for the credential identifier so issuances are chronologically ordered.
 
 ## [1.6.0] — April 1, 2026
 

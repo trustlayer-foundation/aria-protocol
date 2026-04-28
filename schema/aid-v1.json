@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aria.bar/schema/aid-v1.json",
   "title": "ARIA Identity Document (AID) v1.1",
-  "description": "JSON Schema for the ARIA Identity Document — a W3C Verifiable Credential (VC Data Model 2.0) that serves as a cryptographically-signed identity document for AI agents, anchored to DNS. v1.1 adds principal.verificationStatus for machine-readable identity-verification provenance.",
+  "description": "JSON Schema for the ARIA Identity Document — a W3C Verifiable Credential (VC Data Model 2.0) that serves as a cryptographically-signed identity document for AI agents, anchored to DNS. v1.1 adds principal.verificationStatus for machine-readable identity-verification provenance, and clarifies that the top-level `id` is a unique credential-instance URL per W3C VC 2.0 §4.4 (the agent DID lives in credentialSubject.id). credentialSubject.previousCredentialId enables explicit chain-of-issuance traceability.",
   "type": "object",
   "required": [
     "@context",
@@ -44,8 +44,9 @@
     },
     "id": {
       "type": "string",
-      "pattern": "^did:aria:[a-zA-Z0-9.-]+:[a-zA-Z0-9-]+$",
-      "description": "The DID of the agent. Format: did:aria:<domain>:<agent-name>."
+      "format": "uri",
+      "pattern": "^https://api\\.aria\\.bar/v1/credentials/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+      "description": "Unique credential-instance identifier per W3C VC 2.0 §4.4 — a dereferenceable URL containing a UUIDv7 (RFC 9562). NOT the agent DID (the DID lives in credentialSubject.id). Each issuance produces a new id; the URL resolves to that specific signed instance, active or revoked. Equivalent to a TLS certificate serial number."
     },
     "issuer": {
       "type": "string",
@@ -118,7 +119,13 @@
         "id": {
           "type": "string",
           "pattern": "^did:aria:[a-zA-Z0-9.-]+:[a-zA-Z0-9-]+$",
-          "description": "The DID of the agent. Must match the top-level 'id' field."
+          "description": "The DID of the agent. Stable across reissuances. The unique per-issuance identifier lives at the top-level 'id' field per W3C VC 2.0."
+        },
+        "previousCredentialId": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://api\\.aria\\.bar/v1/credentials/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+          "description": "Optional. URL of the previous credential instance for this DID — set when this AID supersedes an earlier one. Enables chain-of-issuance traceability. Omitted on first issuance. The URL resolves to the predecessor's signed AID document (which by then is revoked in the StatusList)."
         },
         "agentName": {
           "type": "string",
