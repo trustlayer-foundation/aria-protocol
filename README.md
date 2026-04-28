@@ -4,7 +4,7 @@
 
 The open protocol for AI agent identity. DNS-anchored. Post-quantum native. Governed by a nonprofit. Working today.
 
-[![Protocol Version](https://img.shields.io/badge/protocol-v1.0-00D4AA)](https://aria.bar/spec)
+[![Protocol Version](https://img.shields.io/badge/protocol-v1.1-00D4AA)](https://aria.bar/spec)
 [![License: Apache 2.0](https://img.shields.io/badge/code-Apache%202.0-blue)](LICENSE-code)
 [![License: CC BY 4.0](https://img.shields.io/badge/docs-CC%20BY%204.0-blue)](LICENSE-docs)
 [![NIST Filing](https://img.shields.io/badge/NIST-2025--0035-orange)](https://aria.bar/nist)
@@ -68,9 +68,29 @@ ARIA is a six-layer protocol:
 | Level | Name | Verification | Credential validity | Status |
 |-------|------|-------------|-------------------|--------|
 | **L0** | Anchored | Cryptographic identity. Self-service. No DNS required. | 366 days | **Live** |
-| **L1** | Identified | DNS-anchored and verified. An identified person controls this agent. | 366 days | Coming soon |
+| **L1** | Identified | DNS-anchored. Email-verified principal. An identified person controls this agent. | 366 days | Coming soon |
 | **L2** | Certified | Organization verified via DoH. vLEI-compatible. | 200 days | Coming soon |
 | **L3** | Sovereign | Legal entity. Government registry. HSM. | 180 days | Coming soon |
+
+## AID schema highlights (v1.1)
+
+Each AID is a W3C Verifiable Credential signed with the composite cryptosuite
+(`mldsa65-ed25519-2026`). Notable fields:
+
+| Field | Purpose |
+|---|---|
+| `id` (top-level) | Unique credential-instance URL — `https://api.aria.bar/v1/credentials/{uuidv7}`. New on every issuance. Equivalent to a TLS certificate serial number. Per W3C VC 2.0 §4.4. |
+| `credentialSubject.id` | The agent DID (`did:aria:…`). Stable across reissuances. |
+| `credentialSubject.spec_version` | `"1.1"` for AIDs conforming to this schema. |
+| `credentialSubject.previousCredentialId` | URL of the prior credential instance this one supersedes. Optional — omitted on first issuance. Enables explicit, signed chain-of-issuance traceability. |
+| `credentialSubject.principal.verificationStatus` | Machine-readable provenance of `principal.legalName`. Enum: `self-declared` (L0, L1), `registry-confirmed` (L2 — vLEI-cross-checked), `legal-verified` (L3 — government documents + admin review). Verifiers MUST consult this before treating `legalName` as authoritative. |
+| `credentialSubject.trustLevel` | `L0`–`L3`. |
+| `credentialStatus` | W3C Bitstring StatusList 2021 entry — flipped to revoked atomically on every reissue. |
+| `proof.proofValue` | Composite ML-DSA-65 + Ed25519 signature; both must verify. |
+
+See [`schema/aid-v1.json`](schema/aid-v1.json) for the canonical schema and
+[`examples/aid-example.json`](examples/aid-example.json) for a complete
+sample.
 
 ## Agent Trust Protocol (ATP)
 
@@ -78,7 +98,10 @@ ATP is the three-phase handshake between an agent and a receiving system:
 
 1. **Declare** — Agent presents AID + intent declaration
 2. **Evaluate** — Receiver checks against DNS policy (`_aria-policy.<domain>`)
-3. **Admit** — Pass or reject, logged to Trust Ledger
+3. **Admit** — Pass or reject, returned as an ATP response code. The
+   admit/reject decision is queued for the Agent Interaction Log (future
+   — see spec §05). Credential lifecycle events are recorded separately
+   in the Trust Ledger.
 
 ```
 _aria-policy.bank.com TXT "v=ATP1; min=L2; enforce=strict; req=finance:*; intent=purpose,principal_ref"
@@ -98,7 +121,7 @@ Enforcement modes: `monitor` → `warn` → `strict` (graduated adoption, like D
 
 | Standard | Mapping |
 |----------|---------|
-| NIST SP 800-63-4 (final, Aug 2025) | L0=IAL1, L1=IAL1+, L2=IAL2, L3=IAL3 |
+| NIST SP 800-63-4 (final, Aug 2025) | L0=IAL1, L1=IAL1, L2=IAL2, L3=IAL3 |
 | FIPS 204 (ML-DSA) | Primary signature algorithm |
 | RFC 8032 (Ed25519) | Classical composite signature |
 | W3C DID Core | `did:aria` method |

@@ -1,14 +1,18 @@
-# ARIA Specification v1.0 — New Section
-# Agent Trust Protocol (ATP)
+# ARIA Specification v1.1 — Agent Trust Protocol (ATP)
 
-> **Section status:** NEW in v1.0. Replaces §11 (Intent Architecture) and §18 (Counterparty Policy Declaration). Those sections are merged, elevated, and expanded into this unified protocol definition.
+> **Section status:** Stable since v1.0 (April 1, 2026). No semantic changes in v1.1
+> — see [`../CHANGELOG.md`](../CHANGELOG.md) for the v1.1 schema clarifications
+> (top-level `id` URL, `previousCredentialId`, `principal.verificationStatus`).
 >
 > **Specification decisions locked March 22, 2026:**
 > - Intent declarations: cryptographically signed (included in ML-DSA envelope)
 > - Enforcement model: three modes (monitor / warn / strict)
 > - Scope matching: wildcard (`commerce.*` matches `commerce.read`)
-> - Trust Ledger replaces "Credential Transparency Log" terminology throughout
-> - Trust Record = single entry in the Trust Ledger
+> - Trust Ledger records credential lifecycle events ONLY (issuance, renewal,
+>   suspension, revocation, expiry, tombstone). Per-ATP-event admit/reject
+>   decisions are queued for the Agent Interaction Log — a future system,
+>   deferred beyond v1.0.
+> - Trust Record = single entry in the Trust Ledger.
 
 ---
 
@@ -87,7 +91,7 @@ If all checks pass → ATP-200 (Admitted).
 The result of evaluation — admit or reject — is:
 
 1. **Communicated to the agent** via an ATP response code (see §XX.4).
-2. **Logged to the Trust Ledger** (see §XX.5). Every ATP interaction generates a Trust Record regardless of outcome. Both admissions and rejections are logged.
+2. **Queued for the Agent Interaction Log** (see §XX.5). The Agent Interaction Log is a separate future system that will record per-ATP-event admit/reject decisions. It is intentionally distinct from the Trust Ledger, which records credential lifecycle events only. Implementation deferred beyond v1.0; ATP responses are returned without persistence in the meantime.
 3. **Optionally reported** to the aggregate reporting endpoint defined in the policy's `rua=` field, enabling DMARC-style visibility reports.
 
 **Enforcement modes determine what "reject" means:**
@@ -318,9 +322,9 @@ Qualifiers are conditional requirements layered on top of base ATP policy rules.
 
 **Policy spoofing.** An attacker could attempt to publish a false ATP policy for a domain they don't control. Mitigation: ATP policies are DNS TXT records. Publishing a TXT record requires domain control — the same security model that protects DMARC, SPF, and DKIM. DNS hijacking is a DNS infrastructure problem, not an ATP problem.
 
-**Intent lying.** An agent could sign an intent declaration that doesn't match its actual behavior. Mitigation: the signed intent is logged to the Trust Ledger. Post-hoc analysis (intent drift detection) can identify agents whose declared intent consistently diverges from actual access patterns. This is a detection mechanism, not a prevention mechanism — consistent with ARIA's role as an accountability layer, not an enforcement engine.
+**Intent lying.** An agent could sign an intent declaration that doesn't match its actual behavior. Mitigation: signed intents will be captured in the Agent Interaction Log (future system) for post-hoc analysis. Intent-drift detection can then identify agents whose declared intent consistently diverges from actual access patterns. This is a detection mechanism, not a prevention mechanism — consistent with ARIA's role as an accountability layer, not an enforcement engine. Until the Agent Interaction Log ships, drift analysis depends on receivers' own request logs.
 
-**Downgrade attacks.** An attacker could strip the ARIA headers from an HTTP request, making the agent appear to be a non-ARIA client. Mitigation: in `enforce=strict` mode, the receiving system rejects requests without ARIA headers entirely. In `enforce=monitor` mode, headerless requests are logged as "unidentified agent" events in the Trust Ledger, providing visibility even without enforcement.
+**Downgrade attacks.** An attacker could strip the ARIA headers from an HTTP request, making the agent appear to be a non-ARIA client. Mitigation: in `enforce=strict` mode, the receiving system rejects requests without ARIA headers entirely. In `enforce=monitor` mode, headerless requests SHOULD be recorded in the receiver's own observability stack (future Agent Interaction Log entries when available), providing visibility even without enforcement.
 
 **DNS caching.** ATP policy changes propagate at DNS TTL speed (default 3600 seconds / 1 hour). During the TTL window, agents may evaluate against a stale policy. Mitigation: the `ttl=` field allows organizations to set shorter TTLs for policies that change frequently. The `/.well-known/aria-atp` HTTPS endpoint provides an immediate-update path for time-sensitive changes.
 

@@ -1,8 +1,17 @@
-# ARIA Protocol Specification v1.0
+# ARIA Protocol Specification v1.1
 
-> **Status:** Published — April 1, 2026
+> **Status:** Published — April 1, 2026 (v1.0). Schema clarified to v1.1 — April 28, 2026.
 > **Canonical version:** [aria.bar/spec](https://aria.bar/spec)
 > **Filed with NIST:** March 9, 2026 (NIST-2025-0035)
+>
+> **What changed in v1.1** (see [CHANGELOG](../CHANGELOG.md) for detail):
+> - `principal.verificationStatus` is now a required, machine-readable enum on the AID
+>   (`self-declared` / `registry-confirmed` / `legal-verified`) so a verifier can act
+>   on identity provenance without interpreting trustLevel separately.
+> - The W3C VC top-level `id` is now a unique credential-instance URL per W3C VC 2.0 §4.4
+>   — equivalent to a TLS certificate serial number. The agent DID continues to live in
+>   `credentialSubject.id`.
+> - `credentialSubject.previousCredentialId` (optional) chains issuances explicitly.
 
 This document provides an overview of the ARIA Protocol specification.
 The full interactive specification is available at [aria.bar/spec](https://aria.bar/spec).
